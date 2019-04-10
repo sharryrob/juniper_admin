@@ -11,10 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+
 @Configuration
 @ComponentScan
 class DataSourceConfig {
-
+	
 	@Autowired
 	EncryptionUtil encryptionUtil;
 
@@ -47,30 +48,27 @@ class DataSourceConfig {
 
 	@Value("${spring.datasource.hikari.idleTimeout}")
 	private int idleTimeout;
-
+	
 	@Value("${master.key.path}")
 	private String master_key_path;
 
-	/**
-	 * @return DataSource
-	 * @throws Exception
-	 */
 	@Bean
 	public DataSource primaryDataSource() throws Exception {
-
-		String content = EncryptionUtil.readFile(master_key_path);
-		byte[] base_pwd = org.apache.commons.codec.binary.Base64.decodeBase64(password);
-		String orcl_decoded_pwd = EncryptionUtil.decryptText(base_pwd, EncryptionUtil.decodeKeyFromString(content));
-
+		
+		String content = encryptionUtil.readFile(master_key_path);
+		byte[] base_pwd=org.apache.commons.codec.binary.Base64.decodeBase64(password);
+		String orcl_decoded_pwd=EncryptionUtil.decryptText(base_pwd, EncryptionUtil.decodeKeyFromString(content));
+		
 		HikariConfig jdbcConfig = new HikariConfig();
-		jdbcConfig.setPoolName(poolName);
-		jdbcConfig.setMaximumPoolSize(maximumPoolSize);
-		jdbcConfig.setMinimumIdle(minimumIdle);
-		jdbcConfig.setJdbcUrl(dataSourceUrl);
-		jdbcConfig.setUsername(user);
-		jdbcConfig.setPassword(orcl_decoded_pwd);
-		jdbcConfig.setDriverClassName(dataSourceClassName);
-		return new HikariDataSource(jdbcConfig);
-
+        jdbcConfig.setPoolName(poolName);
+        jdbcConfig.setMaximumPoolSize(maximumPoolSize);
+        jdbcConfig.setMinimumIdle(minimumIdle);
+        jdbcConfig.setJdbcUrl(dataSourceUrl);
+        jdbcConfig.setUsername(user);
+        jdbcConfig.setPassword(orcl_decoded_pwd);
+        jdbcConfig.setDriverClassName(dataSourceClassName);
+        return new HikariDataSource(jdbcConfig);
+        
+        
 	}
 }

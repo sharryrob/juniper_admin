@@ -16,22 +16,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class ConnectionUtils {
 
 	@Autowired
-	private DataSource dataSource;
-
-	/**
-	 * @return Connection
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws Exception
-	 */
-	public Connection getConnection() throws ClassNotFoundException, SQLException, Exception {
-
+    private DataSource dataSource;
+	
+	
+	public  Connection getConnection() 
+			throws ClassNotFoundException, SQLException,Exception {
+			
 		return dataSource.getConnection();
 	}
 
-	/**
-	 * @param conn
-	 */
+
+
 	public static void rollbackQuietly(final Connection conn) {
 		try {
 			conn.rollback();
@@ -39,9 +34,6 @@ public class ConnectionUtils {
 		}
 	}
 
-	/**
-	 * @param rs
-	 */
 	public static void closeResultSet(final ResultSet rs) {
 		try {
 			rs.close();
@@ -49,9 +41,6 @@ public class ConnectionUtils {
 		}
 	}
 
-	/**
-	 * @param ps
-	 */
 	public static void closePrepareStatement(final PreparedStatement ps) {
 		try {
 			ps.close();

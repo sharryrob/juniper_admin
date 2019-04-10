@@ -1,5 +1,4 @@
 package com.iig.gcp.admin.admincontroller.utils;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -14,23 +13,17 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+
+
 @Component
 public class EncryptionUtil {
-
+	
 	private static String master_key_path;
-
-	/**
-	 * @param value
-	 */
 	@Value("${master.key.path}")
 	public void setMasterKeyPath(final String value) {
-		EncryptionUtil.master_key_path = value;
+		this.master_key_path=value;
 	}
-
-	/**
-	 * @param keyStr
-	 * @return SecretKey
-	 */
+	
 	public static SecretKey decodeKeyFromString(final String keyStr) {
 		/* Decodes a Base64 encoded String into a byte array */
 		String keyString = keyStr.trim();
@@ -41,12 +34,7 @@ public class EncryptionUtil {
 
 		return secretKey;
 	}
-
-	/**
-	 * @param pathname
-	 * @return String
-	 * @throws IOException
-	 */
+	
 	public static String readFile(final String pathname) throws IOException {
 		File file = new File(pathname);
 		StringBuilder fileContents = new StringBuilder((int) file.length());
@@ -65,14 +53,8 @@ public class EncryptionUtil {
 			scanner.close();
 		}
 	}
-
-	/**
-	 * @param byteCipherText
-	 * @param secKey
-	 * @return String
-	 * @throws Exception
-	 */
-	public static String decryptText(final byte[] byteCipherText, final SecretKey secKey) throws Exception {
+	
+	public static  String decryptText(final byte[] byteCipherText,final SecretKey secKey) throws Exception {
 		// AES defaults to AES/ECB/PKCS5Padding in Java 7
 
 		Cipher aesCipher = Cipher.getInstance("AES");
@@ -83,17 +65,12 @@ public class EncryptionUtil {
 
 		return new String(bytePlainText);
 	}
+	
+	public static byte[] encryptText(final String plainText,final String key) throws Exception {
 
-	/**
-	 * @param plainText
-	 * @param key
-	 * @return byte[]
-	 * @throws Exception
-	 */
-	public static byte[] encryptText(final String plainText, final String key) throws Exception {
-
+		
 		// AES defaults to AES/ECB/PKCS5Padding in Java 7
-		SecretKey secKey = decodeKeyFromString(key);
+		SecretKey secKey=decodeKeyFromString(key);
 
 		Cipher aesCipher = Cipher.getInstance("AES");
 
@@ -101,25 +78,21 @@ public class EncryptionUtil {
 
 		byte[] byteCipherText = aesCipher.doFinal(plainText.getBytes());
 
+		
+		
 		return byteCipherText;
 
 	}
-
-	/**
-	 * @param encrypted_key
-	 * @param encrypted_password
-	 * @return String
-	 * @throws Exception
-	 */
+	
 	public static String decyptPassword(final byte[] encrypted_key, final byte[] encrypted_password) throws Exception {
-
+		
 		String content = readFile(master_key_path);
 		SecretKey secKey = decodeKeyFromString(content);
-		String decrypted_key = decryptText(encrypted_key, secKey);
+		String decrypted_key=decryptText(encrypted_key,secKey);
 		SecretKey secKey2 = decodeKeyFromString(decrypted_key);
-		String password = decryptText(encrypted_password, secKey2);
+		String password=decryptText(encrypted_password,secKey2);
 		return password;
-
+		
 	}
 
 }
