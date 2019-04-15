@@ -402,7 +402,7 @@ public class AdminController {
 			} else {
 				message = adminService.updateProject(projectId, projectName, projectOwner, projectDescription, gsdGroup,
 						gsdKey, user.getUser_id());
-				if (message.equals("Success")) {
+				if ("Success".equals(message)) {
 					fetchProjectDetailsForUser(modelMap, message, user);
 					modelMap.addAttribute("successString", "" + projectId + " updated successfully");
 				} else {

@@ -18,7 +18,7 @@ import com.iig.gcp.admin.admincontroller.dto.Group;
 import com.iig.gcp.admin.admincontroller.dto.Feature;
 import com.iig.gcp.admin.admincontroller.dto.CountryMaster;
 
-import com.iig.gcp.admin.admincontroller.utils.ConnectionUtils;;
+import com.iig.gcp.admin.admincontroller.utils.ConnectionUtils;
 
 @Component
 public class AdminDAOImpl implements AdminDAO {
@@ -49,7 +49,8 @@ public class AdminDAOImpl implements AdminDAO {
 	public String adminupdusrgrp(final String username, final String group_seq, final String project) throws Exception {
 		Connection connection = null;
 		PreparedStatement pstm = null;
-		int user_seq = 0, proj_seq = 0;
+		int user_seq = 0; 
+		int proj_seq = 0;
 		String[] group_int = group_seq.split(",");
 		String message = "";
 		try {

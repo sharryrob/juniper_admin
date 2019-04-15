@@ -11,7 +11,7 @@ import com.iig.gcp.admin.admincontroller.dto.CountryMaster;
 import com.iig.gcp.admin.admincontroller.dto.Feature;
 import com.iig.gcp.admin.admincontroller.dto.Group;
 import com.iig.gcp.admin.admincontroller.dto.Project;
-import com.iig.gcp.admin.admincontroller.dto.UserAccount;;
+import com.iig.gcp.admin.admincontroller.dto.UserAccount;
 
 public interface AdminService {
 
