@@ -21,81 +21,92 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	public static final String SECRET = "SecretKeyToGenJWTs";
-	
-	public static class MyUser{
+
+	public static class MyUser {
 		private String name;
 		private String project;
 		private String jwt;
+
 		public String getName() {
 			return name;
 		}
+
 		public void setName(String name) {
 			this.name = name;
 		}
+
 		public String getProject() {
 			return project;
 		}
+
 		public void setProject(String project) {
 			this.project = project;
 		}
+
 		public String getJwt() {
 			return jwt;
 		}
+
 		public void setJwt(String jwt) {
 			this.jwt = jwt;
 		}
 	}
 
-    @Override
-    public Authentication authenticate(Authentication authentication)
-            throws AuthenticationException {
-        String name = authentication.getName().split(":")[0];
-        String project = authentication.getName().split(":")[1];
-        Object credentials = authentication.getCredentials();
-        if (!(credentials instanceof String)) {
-            return null;
-        }
-        String password = credentials.toString();
+	/**
+	 * @return Authentication
+	 */
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		String name = authentication.getName().split(":")[0];
+		String project = authentication.getName().split(":")[1];
+		Object credentials = authentication.getCredentials();
+		if (!(credentials instanceof String)) {
+			return null;
+		}
+		String password = credentials.toString();
 
-        String token = credentials.toString();
-		
+		String token = credentials.toString();
+
 		DecodedJWT decodedToken = JWT.decode(token);
-        JWTVerifier verifier = selectVerifier(decodedToken);
-        DecodedJWT decodedJWT = verifier.verify(token);
-	    
+		JWTVerifier verifier = selectVerifier(decodedToken);
+		DecodedJWT decodedJWT = verifier.verify(token);
 
-        if (decodedJWT.getSubject()== null) {
-            throw new BadCredentialsException("Authentication failed for " + name);
-        }
+		if (decodedJWT.getSubject() == null) {
+			throw new BadCredentialsException("Authentication failed for " + name);
+		}
 
-        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
-        MyUser m = new MyUser();
-        m.setName(name);
-        m.setJwt(password);
-        m.setProject(project);
-        Authentication auth = new
-                UsernamePasswordAuthenticationToken(m, password, grantedAuthorities);
-        return auth;
-    }
-    
-    private JWTVerifier selectVerifier(DecodedJWT decodedToken) {
-        String algorithm = decodedToken.getAlgorithm();
-        switch (algorithm) {
-            case "HS512":
-            	Algorithm algorithm512 = Algorithm.HMAC512(SECRET.getBytes());
-            	return JWT
-                .require(algorithm512)
-                .build();
-                 
-            default:
-                throw new IllegalStateException("Cannot verify against algorithm: " + algorithm);
-        }
-    }
-    
-    @Override
-    public boolean supports(Class<?> authentication) {
-        return authentication.equals(UsernamePasswordAuthenticationToken.class);
-    }
+		List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+		grantedAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
+		MyUser m = new MyUser();
+		m.setName(name);
+		m.setJwt(password);
+		m.setProject(project);
+		Authentication auth = new UsernamePasswordAuthenticationToken(m, password, grantedAuthorities);
+		return auth;
+	}
+
+	/**
+	 * @param decodedToken
+	 * @return JWTVerifier
+	 */
+	private JWTVerifier selectVerifier(DecodedJWT decodedToken) {
+		String algorithm = decodedToken.getAlgorithm();
+		switch (algorithm) {
+		case "HS512":
+			Algorithm algorithm512 = Algorithm.HMAC512(SECRET.getBytes());
+			return JWT.require(algorithm512).build();
+
+		default:
+			throw new IllegalStateException("Cannot verify against algorithm: " + algorithm);
+		}
+	}
+
+	/**
+	 * @return boolean
+	 */
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+	}
 
 }

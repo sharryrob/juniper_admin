@@ -15,9 +15,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value( "${parent.front.micro.services}" )
+	@Value("${parent.front.micro.services}")
 	private String parent_micro_services;
-	
+
+	/**
+	 * @return null
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 
@@ -25,24 +28,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests().antMatchers("/", "/login", "/error").permitAll()
 
-		.antMatchers("/admin/*").hasAnyAuthority("ADMIN")
-		
-		.antMatchers("/system/*").hasAnyAuthority("ADMIN")
+				.antMatchers("/admin/*").hasAnyAuthority("ADMIN")
 
-		.and().exceptionHandling().accessDeniedPage("/accessDenied").and().formLogin().loginPage("http://"+parent_micro_services);
-		http.logout().logoutUrl("/logout").logoutSuccessUrl("http://"+parent_micro_services).invalidateHttpSession(true);
+				.antMatchers("/system/*").hasAnyAuthority("ADMIN")
+
+				.and().exceptionHandling().accessDeniedPage("/accessDenied").and().formLogin()
+				.loginPage("http://" + parent_micro_services);
+		http.logout().logoutUrl("/logout").logoutSuccessUrl("http://" + parent_micro_services)
+				.invalidateHttpSession(true);
 	}
 
+	/**
+	 * @return null
+	 */
 	@Override
 	public void configure(AuthenticationManagerBuilder builder) throws Exception {
 		builder.authenticationProvider(new CustomAuthenticationProvider());
 	}
 
+	/**
+	 * @return null
+	 */
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/resources/**", "/assets/**");
 	}
 
+	/**
+	 * @return AuthenticationManager
+	 */
 	@Bean(name = BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {

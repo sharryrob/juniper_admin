@@ -8,6 +8,9 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 public class IIGStarterParent extends SpringBootServletInitializer {
 
+	/**
+	 * @return SpringApplicationBuilder
+	 */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(IIGStarterParent.class);
